@@ -1,12 +1,9 @@
-`timescale 1ns / 1ps
-
 module Basic_io
 (
 input clk,
 input rst,
 wire[31:0] instructionmem_data
 );
-
 
 wire[31:0] instructionmem_add;
 wire[31:0] datamem_readdata;
