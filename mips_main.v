@@ -1,31 +1,56 @@
-module register_File
-(
-input clk,
-input[4:0] reg1_add,reg2_add,
-input RegWrite,
-input[4:0] write_add,
-input[31:0] write_data,
-output reg[31:0] read_data1,read_data2
+
+`timescale 1ns / 1ps
+
+module mips_main(
+    input clk,                          // Clock input
+    input rst,                          // Reset input
+    input [31:0] instructionmem_data,   // Instruction from instruction memory
+    output [31:0] instructionmem_add,   // Address to instruction memory (PC)
+    input [31:0] datamem_readdata,      // Data read from data memory
+    output mem_write,                   // Memory write control signal
+    output [31:0] datamem_add,          // Address to data memory
+    output [31:0] write_data            // Data to write to memory
 );
 
-reg[31:0] register[0:31];
+    // Control signals
+    wire branch;        // Branch control signal
+    wire jump;          // Jump control signal
+    wire mem_to_reg;    // Memory to register control signal
+    wire reg_dst;       // Register destination control signal
+    wire reg_write;     // Register write control signal
+    wire [2:0] alucontrol; // ALU control signals
+    wire alu_src;       // ALU source control signal
 
-initial
-$readmemh("data_for_registermem.txt",register);
+    // Controller - generates control signals based on instruction
+    Controller control_unit(
+        .instruct(instructionmem_data),
+        .branch(branch),
+        .jump(jump),
+        .mem_to_reg(mem_to_reg),
+        .mem_write(mem_write),          // Connected directly to output
+        .reg_dst(reg_dst),
+        .reg_write(reg_write),
+        .alucontrol(alucontrol),
+        .alu_src(alu_src)
+    );
 
-always@(posedge clk)
-if(RegWrite) register[write_add] = write_data;
-
-always@(reg1_add)
-begin
-if(reg1_add == 4'h0) read_data1 = 32'h00000000;
-else read_data1 = register[reg1_add];
-end
-
-always@(reg2_add)
-begin
-if(reg2_add == 4'h0) read_data2 = 32'h00000000;
-else read_data2 = register[reg2_add];
-end
+    // Datapath - executes instructions using control signals
+    datapath dp(
+        .clk(clk),
+        .rst(rst),
+        .instruct(instructionmem_data),
+        .read_data(datamem_readdata),
+        .branch(branch),
+        .jump(jump),
+        .mem_to_reg(mem_to_reg),
+        .reg_dst(reg_dst),
+        .reg_write(reg_write),
+        .alucontrol(alucontrol),
+        .alu_src(alu_src),
+        .pc(instructionmem_add),        // Connected directly to output
+        .alu_output(datamem_add),       // Connected directly to output
+        .write_data(write_data)         // Connected directly to output
+    );
 
 endmodule
+
