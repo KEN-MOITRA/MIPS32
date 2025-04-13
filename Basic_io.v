@@ -1,3 +1,5 @@
+`timescale 1ns / 1ps
+
 module Basic_io
 (
 input clk,
@@ -40,3 +42,4 @@ instruction_memory instruction_memory_module
 .instruction(instructionmem_data)
 );
 endmodule
+
