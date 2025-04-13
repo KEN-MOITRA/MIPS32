@@ -8,7 +8,7 @@ output reg[31:0] alu_output,
 output reg carry_out
 );
     
-assign zero = ~(alu_output);
+    assign zero = (alu_output == 0)? 1'b1 : 1'b0;
 
 always@(srcA,srcB,alucontrol)
 begin
