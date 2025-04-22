@@ -1,20 +1,16 @@
-`timescale 1ns / 1ps
-
-module Basic_io
-(
+module Basic_io(
 input clk,
 input rst,
-wire[31:0] instructionmem_data
+wire [31:0] instructionmem_data
 );
 
-wire[31:0] instructionmem_add;
-wire[31:0] datamem_readdata;
+wire [31:0] instructionmem_add;
+wire [31:0] datamem_readdata;
 wire mem_write;
-wire[31:0] datamem_add;
-wire[31:0] write_data;
+wire [31:0] datamem_add;
+wire [31:0] write_data;
 
-mips_main main_processor
-(
+mips_main main_processor(
 .clk(clk),
 .rst(rst),
 .instructionmem_data(instructionmem_data),
@@ -25,8 +21,7 @@ mips_main main_processor
 .write_data(write_data)
 );
 
-Data_memory data_memory
-(
+Data_memory data_memory(
 .clk(clk),
 .rst(rst),
 .mem_write(mem_write),
@@ -35,11 +30,9 @@ Data_memory data_memory
 .read_data(datamem_readdata)
 );
 
-
-instruction_memory instruction_memory_module
-(
+instruction_memory instruction_memory_module(
 .next_pc(instructionmem_add),
+.rst(rst),          
 .instruction(instructionmem_data)
 );
 endmodule
-
