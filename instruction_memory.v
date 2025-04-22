@@ -1,17 +1,19 @@
-`timescale 1ns / 1ps
-module instruction_memory
-(
-    input[31:0] next_pc,
-    output reg[31:0] instruction
+module instruction_memory(
+input [31:0] next_pc,
+input rst,               
+output reg [31:0] instruction
 );
 
-reg[31:0] instruction_memory[0:63]; // Memory array to hold 64 instructions
+reg [31:0] instruction_memory[0:63]; // Memory array to hold 64 instructions
 
 initial 
     $readmemh("instruction_mem_data.txt", instruction_memory);
 
-always@(next_pc)
+always@(next_pc or rst)
 begin
-    instruction = instruction_memory[next_pc[7:2]];
+    if (rst)
+        instruction <= 32'h00000000;  // NOP during reset
+    else
+        instruction <= instruction_memory[next_pc[7:2]];
 end
 endmodule
