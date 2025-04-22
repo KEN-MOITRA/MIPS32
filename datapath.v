@@ -51,7 +51,7 @@ wire[4:0] write_reg = (reg_dst)? rd : rt;
 wire[31:0] read_data1,read_data2;
 wire[31:0] overall_result = mem_to_reg ? read_data : alu_output;
 
-register_File regFile(.clk(clk),.reg1_add(rs),.reg2_add(rt),.RegWrite(reg_write),.write_add(write_reg),.write_data(overall_result),.read_data1(read_data1),.read_data2(read_data2));
+register_File regFile(.clk(clk),.rst(rst),.reg1_add(rs),.reg2_add(rt),.RegWrite(reg_write),.write_add(write_reg),.write_data(overall_result),.read_data1(read_data1),.read_data2(read_data2));
 
 assign write_data= read_data2;
 
@@ -62,6 +62,7 @@ wire carry_out;
 wire[31:0] alu_result;
 
 ALU main_alu(
+.rst(rst),
 .srcA(srcA),.srcB(srcB),
 .alucontrol(alucontrol),
 .zero(zero),
